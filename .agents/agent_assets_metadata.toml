@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "wAYwx44WR_qBjoNVrIbEt"
+uri = "file://sprints/Conecta_SUS_Sprints.pdf"
+type = "pdf"
+title = "Conecta SUS - Documentação de Sprints (S1-S5)"
