@@ -468,17 +468,8 @@ elif st.session_state.stage == "queue":
         st.stop()
 
     posicao_atual = db.obter_posicao(st.session_state.numero_chamado)
-    localizacao_atual = st.session_state.get("geo_queue_cache")
-
-    # Captura GPS na fila quando próximo de ser chamado
-    if posicao_atual is not None and posicao_atual <= 4 and localizacao_atual is None:
-        location_fila = streamlit_geolocation()
-        if location_fila and location_fila.get("latitude") is not None:
-            localizacao_atual = {
-                "latitude": location_fila["latitude"],
-                "longitude": location_fila["longitude"],
-            }
-            st.session_state.geo_queue_cache = localizacao_atual
+    # Reutiliza localização já capturada na etapa de verificação — evita crash do DOM
+    localizacao_atual = st.session_state.get("geo_queue_cache") or st.session_state.get("localizacao")
 
     cancelado, motivo = verificar_cancelamento_automatico(
         st.session_state.numero_chamado, localizacao_atual)
