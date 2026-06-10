@@ -34,6 +34,8 @@ if "passou_posicao_3" not in st.session_state:
     st.session_state.passou_posicao_3 = False
 if "privacy_accepted" not in st.session_state:
     st.session_state.privacy_accepted = False
+if "show_geo_widget" not in st.session_state:
+    st.session_state.show_geo_widget = False
 
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
@@ -331,14 +333,20 @@ elif st.session_state.stage == "location":
         </div>
         """, unsafe_allow_html=True)
 
-        location = streamlit_geolocation()
+        if not st.session_state.show_geo_widget:
+            if st.button("📍 Compartilhar minha localização", type="primary", use_container_width=True):
+                st.session_state.show_geo_widget = True
+                st.rerun()
+        else:
+            location = streamlit_geolocation()
 
-        if location and location.get("latitude") is not None:
-            st.session_state.geo_location_cache = {
-                "latitude": location["latitude"],
-                "longitude": location["longitude"],
-            }
-            st.rerun()
+            if location and location.get("latitude") is not None:
+                st.session_state.geo_location_cache = {
+                    "latitude": location["latitude"],
+                    "longitude": location["longitude"],
+                }
+                st.session_state.show_geo_widget = False
+                st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -352,11 +360,13 @@ elif st.session_state.stage == "location":
             unsafe_allow_html=True
         )
 
-        col1, col2 = st.columns([3, 2])
-        with col2:
-            if st.button("← Voltar", use_container_width=True):
-                st.session_state.stage = "form"
-                st.rerun()
+        if not st.session_state.show_geo_widget:
+            col1, col2 = st.columns([3, 2])
+            with col2:
+                if st.button("← Voltar", use_container_width=True):
+                    st.session_state.show_geo_widget = False
+                    st.session_state.stage = "form"
+                    st.rerun()
 
     # ── MODO: GPS capturado — validar distância ────────────────────────────────
     else:
@@ -377,10 +387,12 @@ elif st.session_state.stage == "location":
             with col1:
                 if st.button("🏥 Escolher outra unidade", use_container_width=True):
                     st.session_state.stage = "form"
+                    st.session_state.show_geo_widget = False
                     st.session_state.pop("geo_location_cache", None)
                     st.rerun()
             with col2:
                 if st.button("🔄 Tentar novamente", type="primary", use_container_width=True):
+                    st.session_state.show_geo_widget = False
                     st.session_state.pop("geo_location_cache", None)
                     st.rerun()
         else:
