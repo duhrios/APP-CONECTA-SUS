@@ -36,6 +36,8 @@ if "privacy_accepted" not in st.session_state:
     st.session_state.privacy_accepted = False
 if "show_geo_widget" not in st.session_state:
     st.session_state.show_geo_widget = False
+if "tempo_entrada_posicao_1" not in st.session_state:
+    st.session_state.tempo_entrada_posicao_1 = None
 
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
@@ -177,6 +179,41 @@ st.markdown("""
   .sus-footer { text-align: center; font-size: 0.78rem; color: #94a3b8; margin-top: 24px; }
 
   #MainMenu, footer, header { visibility: hidden; }
+
+  @keyframes pulse-border {
+    0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+    70%  { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+  }
+  .sus-pos1-alert {
+    background: linear-gradient(135deg, #fff1f2, #fef2f2);
+    border: 2px solid #fca5a5;
+    border-radius: 20px;
+    padding: 20px 18px;
+    text-align: center;
+    animation: pulse-border 1.8s infinite;
+    margin-bottom: 14px;
+  }
+  .sus-pos1-numero {
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #dc2626;
+    letter-spacing: -2px;
+  }
+  .sus-countdown-ring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #dc2626;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #dc2626;
+    margin: 10px auto 6px;
+  }
 </style>
 """, unsafe_allow_html=True)
 
@@ -554,7 +591,38 @@ elif st.session_state.stage == "queue":
             total_na_fila_agora = len(db.obter_fila())
             fila_pequena = total_na_fila_agora <= 3
 
-            if posicao == 3:
+            # ── POSIÇÃO 1: aviso pulsante + contagem regressiva ────────────────
+            if posicao == 1:
+                if st.session_state.tempo_entrada_posicao_1 is None:
+                    st.session_state.tempo_entrada_posicao_1 = datetime.now()
+
+                segundos_desde_pos1 = int(
+                    (datetime.now() - st.session_state.tempo_entrada_posicao_1).total_seconds()
+                )
+                limite_chamada = 60
+                segundos_restantes = max(0, limite_chamada - segundos_desde_pos1)
+
+                st.markdown(f"""
+                <div class="sus-pos1-alert">
+                  <p style="font-size:0.75rem;font-weight:700;color:#dc2626;text-transform:uppercase;
+                             letter-spacing:1.5px;margin:0 0 4px">🔔 PRÓXIMO A SER CHAMADO</p>
+                  <div class="sus-pos1-numero">{st.session_state.numero_chamado:02d}</div>
+                  <p style="font-size:0.9rem;font-weight:600;color:#7f1d1d;margin:8px 0 4px">
+                    Dirija-se imediatamente ao balcão!
+                  </p>
+                  <div class="sus-countdown-ring">{segundos_restantes}</div>
+                  <p style="font-size:0.78rem;color:#b91c1c;margin:2px 0 0;font-weight:500">
+                    segundos até o chamado expirar
+                  </p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            elif posicao == 2:
+                st.markdown(
+                    '<div class="sus-warn">⚡ Você é o <strong>segundo da fila</strong>! Vá agora para a recepção da unidade.</div>',
+                    unsafe_allow_html=True)
+
+            elif posicao == 3:
                 st.markdown('<div class="sus-alert">🚨 Você está na posição 3! Você DEVE estar num raio de 1 km da unidade, caso contrário seu chamado será cancelado.</div>', unsafe_allow_html=True)
                 if fila_pequena:
                     if localizacao_atual:
@@ -571,8 +639,6 @@ elif st.session_state.stage == "queue":
                         st.markdown(
                             '<div class="sus-warn">⚠️ A fila está com poucas pessoas. Dirija-se à unidade agora para não perder sua vez.</div>',
                             unsafe_allow_html=True)
-            elif posicao <= 3:
-                st.markdown('<div class="sus-warn">⚡ Você está próximo de ser chamado! Certifique-se de estar na unidade.</div>', unsafe_allow_html=True)
 
             if st.session_state.passou_posicao_3 and st.session_state.tempo_entrada_posicao_3 and not fila_pequena:
                 tempo_restante = timedelta(minutes=3) - (datetime.now() - st.session_state.tempo_entrada_posicao_3)
@@ -594,11 +660,13 @@ elif st.session_state.stage == "queue":
                 db.remover_da_fila(st.session_state.numero_chamado)
                 for key in ["stage", "numero_chamado", "nome_completo", "cpf_sus",
                             "unidade_selecionada", "localizacao", "passou_posicao_3",
-                            "tempo_entrada_posicao_3", "geo_location_cache", "geo_queue_cache"]:
+                            "tempo_entrada_posicao_3", "tempo_entrada_posicao_1",
+                            "geo_location_cache", "geo_queue_cache"]:
                     st.session_state.pop(key, None)
                 st.rerun()
 
-            time.sleep(15)
+            intervalo = 5 if posicao == 1 else 15
+            time.sleep(intervalo)
             st.rerun()
 
 # ── Footer ─────────────────────────────────────────────────────────────────────
