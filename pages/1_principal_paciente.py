@@ -498,8 +498,9 @@ elif st.session_state.stage == "queue":
         st.balloons()
         if st.button("Fazer novo check-in", type="primary", use_container_width=True):
             for key in ["stage", "numero_chamado", "nome_completo", "cpf_sus",
-                        "unidade_selecionada", "localizacao", "passou_posicao_3",
-                        "tempo_entrada_posicao_3", "geo_location_cache", "geo_queue_cache"]:
+                        "telefone", "unidade_selecionada", "localizacao", "passou_posicao_3",
+                        "tempo_entrada_posicao_3", "tempo_entrada_posicao_1",
+                        "geo_location_cache", "geo_queue_cache"]:
                 st.session_state.pop(key, None)
             st.rerun()
         st.stop()
@@ -522,8 +523,9 @@ elif st.session_state.stage == "queue":
         db.remover_da_fila(st.session_state.numero_chamado)
         if st.button("Fazer novo check-in", type="primary", use_container_width=True):
             for key in ["stage", "numero_chamado", "nome_completo", "cpf_sus",
-                        "unidade_selecionada", "localizacao", "passou_posicao_3",
-                        "tempo_entrada_posicao_3", "geo_location_cache", "geo_queue_cache"]:
+                        "telefone", "unidade_selecionada", "localizacao", "passou_posicao_3",
+                        "tempo_entrada_posicao_3", "tempo_entrada_posicao_1",
+                        "geo_location_cache", "geo_queue_cache"]:
                 st.session_state.pop(key, None)
             st.rerun()
     else:
@@ -659,7 +661,7 @@ elif st.session_state.stage == "queue":
             if st.button("❌ Cancelar Check-in", use_container_width=True):
                 db.remover_da_fila(st.session_state.numero_chamado)
                 for key in ["stage", "numero_chamado", "nome_completo", "cpf_sus",
-                            "unidade_selecionada", "localizacao", "passou_posicao_3",
+                            "telefone", "unidade_selecionada", "localizacao", "passou_posicao_3",
                             "tempo_entrada_posicao_3", "tempo_entrada_posicao_1",
                             "geo_location_cache", "geo_queue_cache"]:
                     st.session_state.pop(key, None)
