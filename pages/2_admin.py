@@ -160,10 +160,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-col_back, col_logout, col_reset = st.columns([2, 1, 1])
+col_back, col_painel, col_logout, col_reset = st.columns([2, 1, 1, 1])
 with col_back:
     if st.button("← Voltar ao Check-in", use_container_width=True):
         st.switch_page("pages/1_principal_paciente.py")
+with col_painel:
+    if st.button("📺 Painel TV", use_container_width=True):
+        st.switch_page("pages/3_painel.py")
 with col_logout:
     if st.button("🚪 Sair", key="logout", use_container_width=True):
         st.session_state.admin_logged_in = False

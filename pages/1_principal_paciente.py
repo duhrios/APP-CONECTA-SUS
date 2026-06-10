@@ -676,5 +676,7 @@ st.markdown("""
 <div class="sus-footer">
   Sistema Conecta SUS &nbsp;·&nbsp; Seus dados são protegidos pela LGPD &nbsp;·&nbsp;
   <a href="/admin" target="_self" style="color:#0AB4A0;text-decoration:none;font-weight:600">Área Admin</a>
+  &nbsp;·&nbsp;
+  <a href="/painel" target="_blank" style="color:#2563EB;text-decoration:none;font-weight:600">📺 Painel TV</a>
 </div>
 """, unsafe_allow_html=True)
