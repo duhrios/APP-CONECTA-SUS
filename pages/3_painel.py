@@ -3,6 +3,7 @@ import textwrap
 import html as html_lib
 from datetime import datetime
 import streamlit as st
+import streamlit.components.v1 as components
 import database as db
 
 st.set_page_config(
@@ -27,6 +28,12 @@ fila      = db.obter_fila()
 atendidos = db.obter_atendidos()
 ultimo    = atendidos[0] if atendidos else None
 agora     = datetime.now()
+
+# ── Detecção de nova senha chamada (para o beep) ───────────────────────────────
+numero_atual = ultimo["numero_chamado"] if ultimo else None
+numero_prev  = st.session_state.get("painel_ultimo_numero")
+nova_senha   = (numero_atual is not None) and (numero_atual != numero_prev)
+st.session_state.painel_ultimo_numero = numero_atual
 hora_str  = agora.strftime("%H:%M:%S")
 data_str  = agora.strftime("%d/%m/%Y")
 dias      = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"]
@@ -151,6 +158,30 @@ Sistema Conecta SUS &nbsp;·&nbsp; Prefeitura de São Paulo &nbsp;·&nbsp; Dados
 """)
 
 st.markdown(page, unsafe_allow_html=True)
+
+# ── Beep quando nova senha for chamada ─────────────────────────────────────────
+if nova_senha:
+    components.html("""
+<script>
+(function(){
+var ctx=new(window.AudioContext||window.webkitAudioContext)();
+function beep(freq,start,dur,vol){
+var o=ctx.createOscillator();
+var g=ctx.createGain();
+o.connect(g);g.connect(ctx.destination);
+o.type='sine';o.frequency.value=freq;
+g.gain.setValueAtTime(0,ctx.currentTime+start);
+g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.02);
+g.gain.linearRampToValueAtTime(0,ctx.currentTime+start+dur);
+o.start(ctx.currentTime+start);
+o.stop(ctx.currentTime+start+dur+0.05);
+}
+beep(880,0.0,0.18,0.35);
+beep(1100,0.22,0.18,0.35);
+beep(1320,0.44,0.30,0.28);
+})();
+</script>
+""", height=0)
 
 # Refresh automático a cada 8 segundos
 time.sleep(8)
