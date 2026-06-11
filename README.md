@@ -38,7 +38,7 @@ O sistema moderniza o processo de check-in em Unidades Básicas de Saúde (UBS),
 | 🔔 **Alertas por Posição** | Card pulsante + countdown 60s na posição 1, aviso amarelo na posição 2 |
 | 🛡️ **Anti-spam** | Bloqueio de CPF após 3 tentativas em 60 minutos |
 | 👨‍💼 **Painel Admin** | Dashboard com estatísticas, chamada de próximo, reset por unidade, exportação CSV |
-| 📺 **Painel TV** | Exibição em monitor da recepção com senha chamada + beep sonoro automático |
+| 📺 **Painel TV** | Exibição em monitor da recepção com senha chamada  |
 | 🔁 **Avanço Automático** | Fila avança automaticamente a cada 60 segundos |
 
 ---
