@@ -8,7 +8,7 @@
 [![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![LGPD](https://img.shields.io/badge/LGPD-Conforme-22c55e?style=for-the-badge)](https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd)
 
-**🌐 APP ao vivo → [sistema-sus--eduardo123rios.replit.app](https://sistema-sus--eduardo123rios.replit.app)**
+**🌐 APP ao vivo → [https://projetofinalatualizadozip--eduardorios7.replit.app/principal_paciente)**
 
 </div>
 
